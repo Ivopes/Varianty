@@ -248,8 +248,8 @@ namespace DetekceVariant
         private string GetVarName(char refC, string genotype)
         {
             if (genotype[0] == refC && genotype[1] == refC) return "Bez varianty";
-            if (genotype[0] == refC || genotype[1] == refC) return "Homozygotní";
-            if (genotype[0] == genotype[1]) return "Heterozygotní vuci referenci";
+            if (genotype[0] == refC || genotype[1] == refC) return "Heterozygotní vuci referenci";
+            if (genotype[0] == genotype[1]) return "Homorozygotní";
             return "Heterozygotní mimo referenci";
         }
     }
