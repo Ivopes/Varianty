@@ -17,7 +17,7 @@ namespace DetekceVariant
 
         double _h = 0.001;
         double _refErr = 0.01;
-        double _base = 1000000000000000000000d;
+        double _base = 1;
         string[] _genotypes = new string[] { "AA", "CC", "GG", "TT", "AC", "AG", "AT", "CG", "CT", "GT" };
 
         public VariantDetector(string samFile, string refFile)
@@ -68,7 +68,7 @@ namespace DetekceVariant
                     List<double> variantProbs = new();
                     foreach (var genotype in _genotypes)
                     {
-                        double podminenyResult = _base;
+                        double podminenyResult = 0;
                         for (int k = 0; k < sequences.Count; k++)
                         {
                             string seq = sequences[k];
@@ -82,7 +82,7 @@ namespace DetekceVariant
                             {
 
                             }
-                            podminenyResult *= d;
+                            podminenyResult += Math.Log10(d);
 
                             if (podminenyResult == 0)
                             {
@@ -99,19 +99,45 @@ namespace DetekceVariant
                     for (int i = 0; i < variantProbs.Count; i++)
                     {
                         double p = variantProbs[i];
-                        if (p > first)
+                        if (p < first)
                         {
                             second = first;
                             sI = fI;
                             first = p;
                             fI = i;
                         }
-                        else if (p > second)
+                        else if (p < second)
                         {
                             second = p;
                             sI = i; 
                         }
                     }
+                    
+
+                    double lod = first - second;
+                    lod = Math.Abs(lod);
+
+                    char refChar = _refGenom[index - 1 + j];
+                    if (lod > 0.001)
+                    {
+                        string var = GetVariantForRef(refChar, _genotypes[fI]);
+                        variantsResult[varIndex][j] = string.Empty;
+                        if (!string.IsNullOrEmpty(var))
+                        {
+                            var name = GetVarName(refChar, var);
+                            variantsResult[varIndex][j] = $"{refChar} - {var} ({name})";
+                        }
+                    }
+                    else
+                    {
+                        variantsResult[varIndex][j] = "";
+                        continue;
+                        var name1 = GetVarName(refChar, _genotypes[fI]);
+                        var name2 = GetVarName(refChar, _genotypes[sI]);
+
+                        variantsResult[varIndex][j] = $"{refChar} - {_genotypes[fI]} ({name1}) / {_genotypes[sI]} ({name2})";
+                    }
+                    /*
                     if (first == 0 && second == 0)
                     {
                         variantsResult[varIndex][j] = "";
@@ -130,20 +156,25 @@ namespace DetekceVariant
                     }
                     else
                     {
-                        double lod = Math.Log(first) - Math.Log(second);
-                        if (lod > 1)
+                        //double lod = Math.Log(first) - Math.Log(second);
+                        double lod = first - second;
+                        lod = Math.Abs(lod);
+                        if (lod > 0.0001)
                         {
                             var name = GetVarName(refChar, _genotypes[fI]);
                             variantsResult[varIndex][j] = $"{refChar} - {_genotypes[fI]} ({name})";
                         }
                         else
                         {
+                            variantsResult[varIndex][j] = "";
+                            continue;
                             var name1 = GetVarName(refChar, _genotypes[fI]);
                             var name2 = GetVarName(refChar, _genotypes[sI]);
 
                             variantsResult[varIndex][j] = $"{refChar} - {_genotypes[fI]} ({name1}) / {_genotypes[sI]} ({name2})";
                         }
-                    }
+                    }*/
+
                     if (!string.IsNullOrEmpty(variantsResult[varIndex][j]))
                     {
                         result.Add((index + j, variantsResult[varIndex][j]));
