@@ -37,6 +37,7 @@ namespace DetekceVariant
 
             _refGenom = _refGenom.Substring(6); // ignore prvni radek
             _refGenom = _refGenom.Replace("\n", "").ToUpper();
+            _refGenom = _refGenom.Replace("\r", "").ToUpper();
         }
 
         public List<(int, string)> Calculate()
