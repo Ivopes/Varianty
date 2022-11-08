@@ -94,19 +94,20 @@ namespace DetekceVariant
                         podminenyResult *= (double)GetPforRef(refCharr, genotype, _h, _refErr);
                         variantProbs.Add(podminenyResult);
                     }
-                    double first=0, second=0;
+                    double first, second;
+                    first = second = variantProbs[0];
                     int fI = 0, sI = 0;
                     for (int i = 0; i < variantProbs.Count; i++)
                     {
                         double p = variantProbs[i];
-                        if (p < first)
+                        if (p > first)
                         {
                             second = first;
                             sI = fI;
                             first = p;
                             fI = i;
                         }
-                        else if (p < second)
+                        else if (p > second)
                         {
                             second = p;
                             sI = i; 
@@ -118,7 +119,7 @@ namespace DetekceVariant
                     lod = Math.Abs(lod);
 
                     char refChar = _refGenom[index - 1 + j];
-                    if (lod > 0.001)
+                    if (lod > 0.0001)
                     {
                         string var = GetVariantForRef(refChar, _genotypes[fI]);
                         variantsResult[varIndex][j] = string.Empty;
