@@ -91,12 +91,12 @@ namespace DetekceVariant
                         }
 
                         char refCharr = _refGenom[index - 1 + j];
-                        podminenyResult *= (double)GetPforRef(refCharr, genotype, _h, _refErr);
+                        //podminenyResult *= (double)GetPforRef(refCharr, genotype, _h, _refErr);
                         variantProbs.Add(podminenyResult);
                     }
                     double first, second;
-                    first = second = variantProbs[0];
-                    int fI = 0, sI = 0;
+                    first = second = double.MinValue;
+                    int fI = -1, sI = -1;
                     for (int i = 0; i < variantProbs.Count; i++)
                     {
                         double p = variantProbs[i];
