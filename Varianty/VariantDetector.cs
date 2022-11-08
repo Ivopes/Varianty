@@ -17,8 +17,8 @@ namespace DetekceVariant
 
         double _h = 0.001;
         double _refErr = 0.01;
-        double _base = 1;
         string[] _genotypes = new string[] { "AA", "CC", "GG", "TT", "AC", "AG", "AT", "CG", "CT", "GT" };
+        double _lodThreshhold = .5; //.4, .5 a vic
 
         public VariantDetector(string samFile, string refFile)
         {
@@ -119,7 +119,7 @@ namespace DetekceVariant
                     lod = Math.Abs(lod);
 
                     char refChar = _refGenom[index - 1 + j];
-                    if (lod > 0.0001)
+                    if (lod > _lodThreshhold)
                     {
                         string var = GetVariantForRef(refChar, _genotypes[fI]);
                         variantsResult[varIndex][j] = string.Empty;
@@ -132,49 +132,12 @@ namespace DetekceVariant
                     else
                     {
                         variantsResult[varIndex][j] = "";
-                        continue;
+                        
                         var name1 = GetVarName(refChar, _genotypes[fI]);
                         var name2 = GetVarName(refChar, _genotypes[sI]);
 
                         variantsResult[varIndex][j] = $"{refChar} - {_genotypes[fI]} ({name1}) / {_genotypes[sI]} ({name2})";
                     }
-                    /*
-                    if (first == 0 && second == 0)
-                    {
-                        variantsResult[varIndex][j] = "";
-                        continue;
-                    }
-                    char refChar = _refGenom[index - 1 + j];
-                    if (second == 0)
-                    {
-                        string var = GetVariantForRef(refChar, _genotypes[fI]);
-                        variantsResult[varIndex][j] = string.Empty;
-                        if (!string.IsNullOrEmpty(var))
-                        {
-                            var name = GetVarName(refChar, var);
-                            variantsResult[varIndex][j] = $"{refChar} - {var} ({name})";
-                        }
-                    }
-                    else
-                    {
-                        //double lod = Math.Log(first) - Math.Log(second);
-                        double lod = first - second;
-                        lod = Math.Abs(lod);
-                        if (lod > 0.0001)
-                        {
-                            var name = GetVarName(refChar, _genotypes[fI]);
-                            variantsResult[varIndex][j] = $"{refChar} - {_genotypes[fI]} ({name})";
-                        }
-                        else
-                        {
-                            variantsResult[varIndex][j] = "";
-                            continue;
-                            var name1 = GetVarName(refChar, _genotypes[fI]);
-                            var name2 = GetVarName(refChar, _genotypes[sI]);
-
-                            variantsResult[varIndex][j] = $"{refChar} - {_genotypes[fI]} ({name1}) / {_genotypes[sI]} ({name2})";
-                        }
-                    }*/
 
                     if (!string.IsNullOrEmpty(variantsResult[varIndex][j]))
                     {
